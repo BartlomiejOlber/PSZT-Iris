@@ -36,14 +36,14 @@ def load_data(filepath, n_features) -> Tuple[np.ndarray, np.ndarray]:
     return x.astype('float64'), y
 
 
-def foo():
-    x, y = load_data('data/iris.csv', 4)
+def foo(crossval_n, features_n):
+    x, y = load_data('data/iris.csv', features_n)
     dataset_size = len(y)
     y_encoded = one_hot_encode(y)
-    all_indices_folded = make_crossvalidation_indices(dataset_size, 4)
+    all_indices_folded = make_crossvalidation_indices(dataset_size, crossval_n)
     all_indices = np.arange(dataset_size)
 
-    for validation_indices in all_indices_folded:
+    for i, validation_indices in enumerate(all_indices_folded):
         train_indices = np.delete(all_indices, validation_indices)
         train_x, train_y = x[train_indices], y_encoded[train_indices]
         validation_x, validation_y = x[validation_indices], y_encoded[validation_indices]
@@ -59,19 +59,19 @@ def foo():
         model.add(ActivationLayer(activation_function=fn.tanh, function_derivative=fn.tanh_derivative))
         model.add(FullyConnectedLayer(10, train_y.shape[-1]))
         model.train(train_x, train_y, fn.mse_derivative, learning_rate=0.01, epochs=200)
-        eval(model, validation_x, validation_y)
+        eval(model, validation_x, validation_y, i, crossval_n)
 
 
-def eval(model, val_x, val_y):
+def eval(model, val_x, val_y, val_id, val_n):
     right_count = 0
     for i in range(len(val_x)):
         pred = model.predict(val_x[i])
         if np.argmax(pred) == np.argmax(val_y[i]):
             right_count += 1
-    print(f"GOT RIGHT: {right_count} out of {len(val_x)}\n that is {100*right_count/len(val_x)} %")
+    print(f"VALIDATION {val_id+1}/{val_n} correct: {right_count} out of {len(val_x)}\n - {100*right_count/len(val_x)} %")
 
 
 if __name__ == '__main__':
-    foo()
+    foo(2, 4)
 
 
