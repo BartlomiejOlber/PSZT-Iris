@@ -68,6 +68,8 @@ def eval(model, val_x, val_y, val_id, val_n):
     right_count = 0
     for i in range(len(val_x)):
         pred = model.predict(val_x[i])
+        print(f"true: {val_y[i]}")
+        print(f"true: {pred}")
         if np.argmax(pred) == np.argmax(val_y[i]):
             right_count += 1
     acc_percentage = 100*right_count/len(val_x)

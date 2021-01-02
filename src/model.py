@@ -28,7 +28,7 @@ class Model(object):
                 # print(loss)
                 for layer in reversed(self._layers):
                     loss = layer.backpropagation(loss, learning_rate)
-            self._on_epoch_end(y, predictions, epoch)
+            # self._on_epoch_end(y, predictions, epoch)
 
     @staticmethod
     def _on_epoch_end(groundtruth, predictions, epoch):
