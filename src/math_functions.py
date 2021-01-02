@@ -20,3 +20,4 @@ def tanh_derivative(x):
 
 def mse_derivative(groundtruth, prediction):
     return 2 * (prediction - groundtruth) / groundtruth.size
+

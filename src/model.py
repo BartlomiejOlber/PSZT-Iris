@@ -25,6 +25,7 @@ class Model(object):
             for i in range(len(x)):
                 predictions.append(self.predict(x[i]))
                 loss = loss_function(y[i], predictions[i])
+                # print(loss)
                 for layer in reversed(self._layers):
                     loss = layer.backpropagation(loss, learning_rate)
             self._on_epoch_end(y, predictions, epoch)

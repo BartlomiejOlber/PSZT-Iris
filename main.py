@@ -42,6 +42,7 @@ def foo(crossval_n, features_n):
     y_encoded = one_hot_encode(y)
     all_indices_folded = make_crossvalidation_indices(dataset_size, crossval_n)
     all_indices = np.arange(dataset_size)
+    accuracy = []
 
     for i, validation_indices in enumerate(all_indices_folded):
         train_indices = np.delete(all_indices, validation_indices)
@@ -51,15 +52,16 @@ def foo(crossval_n, features_n):
 
         train_x.resize((train_x.shape[0], 1, train_x.shape[1]))
 
-        model.add(FullyConnectedLayer(x.shape[-1], 20))
+        model.add(FullyConnectedLayer(x.shape[-1], 8))
         # model.add(ActivationLayer(activation_function=fn.sigmoid, function_derivative=fn.sigmoid_derivative))
         model.add(ActivationLayer(activation_function=fn.tanh, function_derivative=fn.tanh_derivative))
-        model.add(FullyConnectedLayer(20, 10))
+        model.add(FullyConnectedLayer(8, 5))
         # model.add(ActivationLayer(activation_function=fn.sigmoid, function_derivative=fn.sigmoid_derivative))
         model.add(ActivationLayer(activation_function=fn.tanh, function_derivative=fn.tanh_derivative))
-        model.add(FullyConnectedLayer(10, train_y.shape[-1]))
-        model.train(train_x, train_y, fn.mse_derivative, learning_rate=0.01, epochs=200)
-        eval(model, validation_x, validation_y, i, crossval_n)
+        model.add(FullyConnectedLayer(5, train_y.shape[-1]))
+        model.train(train_x, train_y, fn.mse_derivative, learning_rate=0.1, epochs=100)
+        accuracy.append(eval(model, validation_x, validation_y, i, crossval_n))
+    print(f"Avg crossvalidation accuracy: {np.array(accuracy).mean()}")
 
 
 def eval(model, val_x, val_y, val_id, val_n):
@@ -68,10 +70,12 @@ def eval(model, val_x, val_y, val_id, val_n):
         pred = model.predict(val_x[i])
         if np.argmax(pred) == np.argmax(val_y[i]):
             right_count += 1
-    print(f"VALIDATION {val_id+1}/{val_n} correct: {right_count} out of {len(val_x)}\n - {100*right_count/len(val_x)} %")
+    acc_percentage = 100*right_count/len(val_x)
+    print(f"crossvalidation: {val_id+1}/{val_n} correct: {right_count} out of {len(val_x)}\n - {acc_percentage} %")
+    return acc_percentage
 
 
 if __name__ == '__main__':
-    foo(2, 4)
+    foo(5, 4)
 
 
