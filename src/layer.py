@@ -12,5 +12,5 @@ class Layer(ABC):
         pass
 
     @abstractmethod
-    def backpropagation(self, output_error):
+    def backpropagation(self, output_error, learning_rate=None):
         pass

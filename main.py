@@ -1,5 +1,11 @@
 import pandas as pd
 import numpy as np
+from typing import Tuple
+
+from src.activation_layer import ActivationLayer
+from src.fully_connected_layer import FullyConnectedLayer
+from src.model import Model
+import src.math_functions as fn
 
 
 def make_crossvalidation_indices(dataset_size, n_folds):
@@ -23,11 +29,11 @@ def one_hot_encode(labels):
     return onehot_encoded
 
 
-def load_data(filepath, n_features):
+def load_data(filepath, n_features) -> Tuple[np.ndarray, np.ndarray]:
     data = pd.read_csv(filepath, header=None)
     x = data.values[:, :n_features]
     y = data.values[:, n_features]
-    return x, y
+    return x.astype('float64'), y
 
 
 def foo():
@@ -41,6 +47,28 @@ def foo():
         train_indices = np.delete(all_indices, validation_indices)
         train_x, train_y = x[train_indices], y_encoded[train_indices]
         validation_x, validation_y = x[validation_indices], y_encoded[validation_indices]
+        model = Model()
+
+        train_x.resize((train_x.shape[0], 1, train_x.shape[1]))
+
+        model.add(FullyConnectedLayer(x.shape[-1], 20))
+        # model.add(ActivationLayer(activation_function=fn.sigmoid, function_derivative=fn.sigmoid_derivative))
+        model.add(ActivationLayer(activation_function=fn.tanh, function_derivative=fn.tanh_derivative))
+        model.add(FullyConnectedLayer(20, 10))
+        # model.add(ActivationLayer(activation_function=fn.sigmoid, function_derivative=fn.sigmoid_derivative))
+        model.add(ActivationLayer(activation_function=fn.tanh, function_derivative=fn.tanh_derivative))
+        model.add(FullyConnectedLayer(10, train_y.shape[-1]))
+        model.train(train_x, train_y, fn.mse_derivative, learning_rate=0.01, epochs=200)
+        eval(model, validation_x, validation_y)
+
+
+def eval(model, val_x, val_y):
+    right_count = 0
+    for i in range(len(val_x)):
+        pred = model.predict(val_x[i])
+        if np.argmax(pred) == np.argmax(val_y[i]):
+            right_count += 1
+    print(f"GOT RIGHT: {right_count} out of {len(val_x)}\n that is {100*right_count/len(val_x)} %")
 
 
 if __name__ == '__main__':

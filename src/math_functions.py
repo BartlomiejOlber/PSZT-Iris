@@ -10,12 +10,12 @@ def sigmoid_derivative(x):
     return f * (1 - f)
 
 
-def relu(x):
-    return x * (x > 0)
+def tanh(x):
+    return np.tanh(x)
 
 
-def relu_derivative(x):
-    return (x > 0) * 1
+def tanh_derivative(x):
+    return 1 - np.tanh(x) ** 2
 
 
 def mse_derivative(groundtruth, prediction):
