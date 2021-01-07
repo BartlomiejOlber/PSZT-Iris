@@ -52,14 +52,14 @@ def foo(crossval_n, features_n):
 
         train_x.resize((train_x.shape[0], 1, train_x.shape[1]))
 
-        model.add(FullyConnectedLayer(x.shape[-1], 8))
-        # model.add(ActivationLayer(activation_function=fn.sigmoid, function_derivative=fn.sigmoid_derivative))
-        model.add(ActivationLayer(activation_function=fn.tanh, function_derivative=fn.tanh_derivative))
-        model.add(FullyConnectedLayer(8, 5))
-        # model.add(ActivationLayer(activation_function=fn.sigmoid, function_derivative=fn.sigmoid_derivative))
-        model.add(ActivationLayer(activation_function=fn.tanh, function_derivative=fn.tanh_derivative))
-        model.add(FullyConnectedLayer(5, train_y.shape[-1]))
-        model.train(train_x, train_y, fn.mse_derivative, learning_rate=0.1, epochs=100)
+        model.add(FullyConnectedLayer(x.shape[-1], 20))
+        model.add(ActivationLayer(activation_function=fn.sigmoid, function_derivative=fn.sigmoid_derivative))
+        # model.add(ActivationLayer(activation_function=fn.tanh, function_derivative=fn.tanh_derivative))
+        model.add(FullyConnectedLayer(20, 10))
+        model.add(ActivationLayer(activation_function=fn.sigmoid, function_derivative=fn.sigmoid_derivative))
+        # model.add(ActivationLayer(activation_function=fn.tanh, function_derivative=fn.tanh_derivative))
+        model.add(FullyConnectedLayer(10, train_y.shape[-1]))
+        model.train(train_x, train_y, fn.mse_derivative, learning_rate=0.05, epochs=400)
         accuracy.append(eval(model, validation_x, validation_y, i, crossval_n))
     print(f"Avg crossvalidation accuracy: {np.array(accuracy).mean()}")
 
@@ -78,6 +78,6 @@ def eval(model, val_x, val_y, val_id, val_n):
 
 
 if __name__ == '__main__':
-    foo(5, 4)
+    foo(6, 4)
 
 

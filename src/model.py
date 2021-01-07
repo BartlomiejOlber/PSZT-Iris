@@ -21,10 +21,8 @@ class Model(object):
 
     def train(self, x: np.ndarray, y: np.ndarray, loss_function: Callable, learning_rate: float, epochs: int):
         for epoch in range(epochs):
-            predictions = []
             for i in range(len(x)):
-                predictions.append(self.predict(x[i]))
-                loss = loss_function(y[i], predictions[i])
+                loss = loss_function(y[i], self.predict(x[i]))
                 # print(loss)
                 for layer in reversed(self._layers):
                     loss = layer.backpropagation(loss, learning_rate)
