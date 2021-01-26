@@ -9,6 +9,7 @@ from tests.tests import find_lr, test_architecture
 
 
 def train_and_validate(crossval_n, features_n):
+    print_loss = parse_args()
     x, y = load_data('data/iris.csv', features_n)
     dataset_size = len(y)
     y_encoded = one_hot_encode(y)
@@ -23,20 +24,29 @@ def train_and_validate(crossval_n, features_n):
 
         train_x.resize((train_x.shape[0], 1, train_x.shape[1]))
 
-        model.add(FullyConnectedLayer(x.shape[-1], 40))
-        # model.add(ActivationLayer(activation_function=fn.sigmoid, function_derivative=fn.sigmoid_derivative))
+        model.add(FullyConnectedLayer(x.shape[-1], 8))
         model.add(ActivationLayer(activation_function=fn.tanh, function_derivative=fn.tanh_derivative))
-        model.add(FullyConnectedLayer(40, 10))
-        # model.add(ActivationLayer(activation_function=fn.sigmoid, function_derivative=fn.sigmoid_derivative))
-        model.add(ActivationLayer(activation_function=fn.tanh, function_derivative=fn.tanh_derivative))
-        model.add(FullyConnectedLayer(10, train_y.shape[-1]))
-        model.train(train_x, train_y, fn.mse_derivative, learning_rate=0.005, epochs=600)
+        # model.add(FullyConnectedLayer(32, 16))
+        # model.add(ActivationLayer(activation_function=fn.tanh, function_derivative=fn.tanh_derivative))
+        # model.add(FullyConnectedLayer(16, 8))
+        # model.add(ActivationLayer(activation_function=fn.tanh, function_derivative=fn.tanh_derivative))
+        model.add(FullyConnectedLayer(8, train_y.shape[-1]))
+        model.train(train_x, train_y, fn.mse_derivative, learning_rate=0.02, epochs=400, print_loss=print_loss)
         accuracy.append(eval(model, validation_x, validation_y, i, crossval_n))
     print(f"Avg crossvalidation accuracy: {np.array(accuracy).mean()}")
 
 
+def parse_args():
+    import argparse
+    ap = argparse.ArgumentParser()
+    ap.add_argument('-p', "--print", action='store_true', help="print training loss on every epoch's end")
+    args = vars(ap.parse_args())
+    return args['print']
+
+
 if __name__ == '__main__':
-    # train_and_validate(6, 4)
+
+    train_and_validate(6, 4)
     # find_lr(6, 4)
-    test_architecture(6, 4)
+    # test_architecture(6, 4)
 

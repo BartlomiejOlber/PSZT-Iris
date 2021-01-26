@@ -40,5 +40,5 @@ def eval(model, val_x, val_y, val_id, val_n):
         if np.argmax(pred) == np.argmax(val_y[i]):
             right_count += 1
     acc_percentage = 100*right_count/len(val_x)
-    # print(f"crossvalidation: {val_id+1}/{val_n} correct: {right_count} out of {len(val_x)}\n - {acc_percentage} %")
+    print(f"\n crossvalidation: {val_id+1}/{val_n} correct: {right_count} out of {len(val_x)} - {acc_percentage} % ")
     return acc_percentage
