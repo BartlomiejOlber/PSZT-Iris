@@ -4,11 +4,15 @@ from src.callback import print_loss
 import numpy as np
 from typing import Callable
 from sklearn.metrics import mean_squared_error
-
+from tqdm import tqdm
 
 class Model(object):
     def __init__(self):
         self._layers = []
+
+    def clear_weights(self):
+        for layer in self._layers:
+            layer.clear()
 
     def add(self, layer: Layer):
         self._layers.append(layer)
@@ -20,6 +24,7 @@ class Model(object):
         return layer_output
 
     def train(self, x: np.ndarray, y: np.ndarray, loss_function: Callable, learning_rate: float, epochs: int):
+        # for epoch in tqdm(range(epochs)):
         for epoch in range(epochs):
             for i in range(len(x)):
                 loss = loss_function(y[i], self.predict(x[i]))

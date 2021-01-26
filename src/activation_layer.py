@@ -15,3 +15,7 @@ class ActivationLayer(Layer):
 
     def backpropagation(self, output_error, learning_rate=None):
         return output_error * self._function_derivative(self._input)
+
+    def clear(self):
+        self._input = None
+        self._output = None
